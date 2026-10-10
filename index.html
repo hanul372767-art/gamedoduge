@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>영양소 오답 사냥꾼: 틀린 두더지를 찾아라! | 중학교 기술·가정</title>
+  <meta name="description" content="중학교 기술·가정 Ⅱ. 청소년 자립을 위한 생활 - 01. 청소년기 영양 (교과서 56~59쪽) 수업용 두더지 게임. 올바른 지식은 보호하고 틀린 지식을 든 두더지만 잡는 오개념 교정 학습 게임!">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Google Fonts: Noto Sans KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- 1. 상단 네비게이션 & 교과 단원 표시 -->
+  <header class="game-header">
+    <div class="title-badge-group">
+      <span class="school-tag">기술·가정 p.56~59</span>
+      <h1 class="game-title">
+        <span>🔨</span> 영양소 오답 사냥꾼
+      </h1>
+    </div>
+    <div class="header-btn-group">
+      <button id="openSummaryBtn" class="btn-icon-text" title="교과서 핵심 요약 보기">
+        <span>📖</span> 교과서 요약
+      </button>
+      <button id="openSettingsBtn" class="btn-icon-text" title="게임 설정 (속도/시간)">
+        <span>⚙️</span> 설정
+      </button>
+      <button id="soundToggleBtn" class="btn-icon-text" title="효과음 켜기/끄기">
+        <span>🔊</span> 소리 켜짐
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. 게임 상황 HUD (점수, 단계, 시간, 라이프, 콤보) -->
+  <section class="hud-container">
+    <div class="hud-item">
+      <span class="hud-label">🎯 현재 단계</span>
+      <div id="stageBadge" class="stage-badge">Stage 1. 영양소 3대 기능</div>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">⭐ 점수</span>
+      <div id="scoreText" class="hud-value score-value">0</div>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">⏳ 남은 시간</span>
+      <div id="timerBox" class="timer-box">
+        <span id="timerText" class="hud-value timer-value">60s</span>
+      </div>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">❤️ 하트 (라이프)</span>
+      <div id="livesContainer" class="lives-container">
+        <span class="heart">❤️</span>
+        <span class="heart">❤️</span>
+        <span class="heart">❤️</span>
+      </div>
+    </div>
+    <div class="hud-item">
+      <span class="hud-label">🔥 연속 콤보</span>
+      <div id="comboText" class="hud-value combo-value">0 C</div>
+    </div>
+  </section>
+
+  <!-- 3. 핵심 규칙 알림 배너 (역발상 주의) -->
+  <div id="ruleBanner" class="rule-banner">
+    <div>
+      🚨 <strong>규칙 주의:</strong> <span class="highlight-bad">틀린 설명(오답)</span>을 든 두더지만 뿅망치로 잡으세요!
+    </div>
+    <div>
+      <span class="highlight-good">맞는 설명(정답)</span>을 때리면 하트가 깎여요! 🙅‍♂️
+    </div>
+  </div>
+
+  <!-- 4. 메인 3x3 두더지 구멍 필드 -->
+  <main id="gameArena" class="game-arena">
+    <!-- Hole 0 -->
+    <div class="hole-wrapper" id="hole-0">
+      <div class="mole-container" id="mole-0">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-0">탄수화물</span>
+          <p class="mole-text" id="txt-0">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+
+    <!-- Hole 1 -->
+    <div class="hole-wrapper" id="hole-1">
+      <div class="mole-container" id="mole-1">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-1">단백질</span>
+          <p class="mole-text" id="txt-1">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+
+    <!-- Hole 2 -->
+    <div class="hole-wrapper" id="hole-2">
+      <div class="mole-container" id="mole-2">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-2">지방</span>
+          <p class="mole-text" id="txt-2">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+
+    <!-- Hole 3 -->
+    <div class="hole-wrapper" id="hole-3">
+      <div class="mole-container" id="mole-3">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-3">비타민</span>
+          <p class="mole-text" id="txt-3">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+
+    <!-- Hole 4 -->
+    <div class="hole-wrapper" id="hole-4">
+      <div class="mole-container" id="mole-4">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-4">무기질</span>
+          <p class="mole-text" id="txt-4">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+
+    <!-- Hole 5 -->
+    <div class="hole-wrapper" id="hole-5">
+      <div class="mole-container" id="mole-5">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-5">물</span>
+          <p class="mole-text" id="txt-5">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+
+    <!-- Hole 6 -->
+    <div class="hole-wrapper" id="hole-6">
+      <div class="mole-container" id="mole-6">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-6">칼슘</span>
+          <p class="mole-text" id="txt-6">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+
+    <!-- Hole 7 -->
+    <div class="hole-wrapper" id="hole-7">
+      <div class="mole-container" id="mole-7">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-7">철</span>
+          <p class="mole-text" id="txt-7">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+
+    <!-- Hole 8 -->
+    <div class="hole-wrapper" id="hole-8">
+      <div class="mole-container" id="mole-8">
+        <div class="mole-sign">
+          <span class="mole-keyword" id="kw-8">식이섬유</span>
+          <p class="mole-text" id="txt-8">설명 텍스트가 표시됩니다.</p>
+        </div>
+        <svg class="mole-graphic" viewBox="0 0 100 85">
+          <ellipse cx="50" cy="50" rx="36" ry="34" fill="#795548" />
+          <ellipse cx="50" cy="58" rx="22" ry="18" fill="#d7ccc8" />
+          <ellipse cx="50" cy="50" rx="10" ry="7" fill="#3e2723" />
+          <circle cx="36" cy="38" r="5" fill="#212121" />
+          <circle cx="38" cy="36" r="2" fill="#ffffff" />
+          <circle cx="64" cy="38" r="5" fill="#212121" />
+          <circle cx="66" cy="36" r="2" fill="#ffffff" />
+          <ellipse cx="28" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <ellipse cx="72" cy="52" rx="6" ry="4" fill="#ffab91" opacity="0.8" />
+          <path d="M46 56 Q50 62 54 56" stroke="#3e2723" stroke-width="2.5" fill="none" stroke-linecap="round" />
+        </svg>
+      </div>
+      <div class="soil-mound"></div>
+      <div class="soil-grass"></div>
+    </div>
+  </main>
+
+  <!-- =========================================================================
+       MODAL 1: 게임 시작 및 단계 선택 모달
+       ========================================================================= -->
+  <div id="startModal" class="modal-overlay active">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title"><span>🎮</span> 영양소 오답 사냥꾼</h2>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 1.05rem; font-weight: 700; color: #1b5e20; margin-bottom: 8px;">
+          단원: Ⅱ. 청소년 자립을 위한 생활 > 01. 청소년기 영양 (교과서 56~59쪽)
+        </p>
+        <p style="margin-bottom: 14px; color: #455a64;">
+          두더지들이 교과서 영양 지식을 들고 나옵니다.<br>
+          <strong>잘못 짝지어지거나 틀린 내용(오답)을 든 두더지만 뿅망치로 잡으세요!</strong><br>
+          올바른 설명을 든 두더지를 때리면 아파하며 하트(생명)가 줄어듭니다!
+        </p>
+
+        <h3 style="font-size: 1rem; color: #2e7d32; margin-top: 16px;">도전할 스테이지를 선택하세요:</h3>
+        <div class="stage-select-grid">
+          <div class="stage-card active" data-stage="stage1">
+            <div class="stage-card-title">Stage 1. 3대 기능 탐정</div>
+            <div class="stage-card-desc">에너지 공급, 신체 조직 구성, 생리 기능 조절 영양소 구별하기</div>
+          </div>
+          <div class="stage-card" data-stage="stage2">
+            <div class="stage-card-title">Stage 2. 3대 영양소 진실게임</div>
+            <div class="stage-card-desc">탄수화물, 단백질, 지방의 열량(kcal), 소화 형태, 급원 식품</div>
+          </div>
+          <div class="stage-card" data-stage="stage3">
+            <div class="stage-card-title">Stage 3. 미세 영양소 & 물</div>
+            <div class="stage-card-desc">비타민(A·D·B1·B2·C)과 무기질(칼슘·철·나트륨), 물의 결핍증과 특징</div>
+          </div>
+          <div class="stage-card" data-stage="stage4">
+            <div class="stage-card-title">Stage 4. 종합 마스터</div>
+            <div class="stage-card-desc">전 단원 무작위 출제! 최고의 영양 박사에 도전하세요.</div>
+          </div>
+        </div>
+
+        <div style="background: #e8f5e9; padding: 12px 16px; border-radius: 12px; font-size: 0.88rem; color: #1b5e20;">
+          💡 <strong>수업 팁:</strong> 두더지는 <strong>빠르게(0.18초) 튀어나오지만, 기본 15초 동안 넉넉하게 머뭅니다!</strong> (설정에서 12~20초 조절 가능) 찬찬히 읽고 정확하게 판단하세요.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="startGameBtn" class="btn-primary">
+          <span>🔨</span> 게임 시작하기!
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: 교과서 56~59쪽 핵심 요약 모달 (학습용)
+       ========================================================================= -->
+  <div id="summaryModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 760px;">
+      <div class="modal-header">
+        <h2 class="modal-title"><span>📖</span> 교과서 56~59쪽 쏙쏙 핵심 요약</h2>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h3 class="summary-section-title">1. 청소년기 영양의 중요성</h3>
+        <p>• <strong>청소년기</strong>는 성장 급등과 성적 성숙이 이루어지고 활동량이 많아 충분한 영양 공급이 필수적입니다.</p>
+        <p>• 청소년기에 형성된 식습관은 평생의 건강에 직접적인 영향을 미칩니다.</p>
+
+        <h3 class="summary-section-title">2. 영양소의 3대 기능</h3>
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>기능</th>
+              <th>해당 영양소</th>
+              <th>주요 역할</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>에너지 공급</strong></td>
+              <td><strong>탄수화물, 단백질, 지방</strong></td>
+              <td>생명 유지와 신체 활동에 필요한 에너지(열량) 공급</td>
+            </tr>
+            <tr>
+              <td><strong>신체 조직 구성</strong></td>
+              <td><strong>단백질, 지방, 무기질, 물</strong></td>
+              <td>근육, 혈액, 뼈 등의 몸 조직 구성 및 성장 발달</td>
+            </tr>
+            <tr>
+              <td><strong>생리 기능 조절</strong></td>
+              <td><strong>단백질, 비타민, 무기질, 물</strong></td>
+              <td>체온 유지 등 몸 기능 조절 및 신진대사 보조</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="summary-section-title">3. 3대 영양소 (탄수화물, 단백질, 지방)</h3>
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>영양소</th>
+              <th>열량</th>
+              <th>분해 형태</th>
+              <th>핵심 특징 및 급원 식품</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>탄수화물</strong></td>
+              <td>4 kcal/g</td>
+              <td>포도당</td>
+              <td>• <strong>뇌와 신경 세포의 유일한 에너지원</strong><br>• 남은 포도당은 체지방으로 저장<br>• <strong>식이섬유</strong>: 소화·흡수X, 변비 예방 및 포만감</td>
+            </tr>
+            <tr>
+              <td><strong>단백질</strong></td>
+              <td>4 kcal/g</td>
+              <td>아미노산</td>
+              <td>• 근육, 혈액 구성, 효소·호르몬 형성, 면역 기능<br>• <strong>필수 아미노산</strong>: 체내 합성 안 됨, 반드시 식품(동물성) 섭취</td>
+            </tr>
+            <tr>
+              <td><strong>지방</strong></td>
+              <td><strong>9 kcal/g</strong></td>
+              <td>지방산 + 글리세롤</td>
+              <td>• 체온 유지, 장기 보호, 지용성 비타민 흡수 도움<br>• <strong>포화 지방산</strong>: 버터, 비계 (과다 시 심혈관 질환 위험)<br>• <strong>불포화 지방산</strong>: 식물성 기름, 견과류, 등 푸른 생선</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="summary-section-title">4. 비타민 & 무기질 & 물</h3>
+        <table class="summary-table">
+          <thead>
+            <tr>
+              <th>구분</th>
+              <th>종류</th>
+              <th>주요 기능</th>
+              <th>결핍증 / 과잉증</th>
+              <th>함유 식품</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td rowspan="2"><strong>지용성 비타민</strong><br>(기름 녹음, 저장됨)</td>
+              <td><strong>비타민 A</strong></td>
+              <td>어두운 곳 시력 조절, 피부 유지</td>
+              <td><strong>야맹증</strong>, 안구 건조증</td>
+              <td>당근, 단호박, 쇠간, 달걀노른자</td>
+            </tr>
+            <tr>
+              <td><strong>비타민 D</strong></td>
+              <td>칼슘 흡수 촉진, 뼈 튼튼 (햇빛 합성)</td>
+              <td><strong>구루병</strong>, 골다공증</td>
+              <td>버섯, 쇠간, 달걀, 우유</td>
+            </tr>
+            <tr>
+              <td rowspan="3"><strong>수용성 비타민</strong><br>(물 녹음, 배설됨)</td>
+              <td><strong>비타민 B1</strong></td>
+              <td>에너지 대사 보조</td>
+              <td><strong>각기병</strong></td>
+              <td>돼지고기, 현미, 콩</td>
+            </tr>
+            <tr>
+              <td><strong>비타민 B2</strong></td>
+              <td>에너지 대사 보조</td>
+              <td><strong>설염, 구순구각염</strong></td>
+              <td>우유, 요구르트, 치즈, 쇠간</td>
+            </tr>
+            <tr>
+              <td><strong>비타민 C</strong></td>
+              <td>결합 조직 형성, 상처 회복, 철 흡수</td>
+              <td><strong>괴혈병</strong></td>
+              <td>귤, 딸기, 시금치, 고추</td>
+            </tr>
+            <tr>
+              <td rowspan="3"><strong>무기질</strong></td>
+              <td><strong>칼슘 (Ca)</strong></td>
+              <td>뼈와 치아 구성</td>
+              <td>골다공증, 성장 부진</td>
+              <td>우유 및 유제품, 멸치</td>
+            </tr>
+            <tr>
+              <td><strong>철 (Fe)</strong></td>
+              <td>헤모글로빈 성분, 산소 운반</td>
+              <td><strong>빈혈</strong></td>
+              <td>쇠고기, 달걀노른자, 녹색 채소</td>
+            </tr>
+            <tr>
+              <td><strong>나트륨 (Na)</strong></td>
+              <td>체내 삼투압 조절</td>
+              <td>(과잉) 고혈압, 부종</td>
+              <td>소금, 라면, 케첩, 장류</td>
+            </tr>
+            <tr>
+              <td colspan="2"><strong>물</strong></td>
+              <td colspan="3">• 체중의 약 2/3 구성, 체온 조절, 노폐물 배출<br>• 20% 이상 손실 시 위험, 순수한 물로 섭취 권장</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary modal-close-trigger">확인했습니다</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 3: 게임 설정 모달 (머무르는 시간 조절)
+       ========================================================================= -->
+  <div id="settingsModal" class="modal-overlay">
+    <div class="modal-content" style="max-width: 500px;">
+      <div class="modal-header">
+        <h2 class="modal-title"><span>⚙️</span> 게임 환경 설정</h2>
+        <button class="modal-close-btn modal-close-trigger">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">두더지 머무르는 시간 (읽기 시간)</div>
+            <div class="setting-desc">두더지가 구멍 위에 떠 있는 시간입니다.</div>
+          </div>
+          <div class="btn-toggle-group">
+            <button class="btn-toggle duration-toggle" data-duration="20000">보통 (20초)</button>
+            <button class="btn-toggle duration-toggle active" data-duration="15000">여유 (15초)</button>
+            <button class="btn-toggle duration-toggle" data-duration="12000">도전 (12초)</button>
+          </div>
+        </div>
+
+        <div style="background: #e3f2fd; padding: 12px; border-radius: 10px; font-size: 0.85rem; color: #1565c0; margin-top: 15px;">
+          💡 <strong>등장 속도:</strong> 두더지는 항상 0.18초 만에 쏙! 신속하게 나타납니다. 학생들이 문장을 읽는 속도에 맞추어 위의 머무르는 시간을 조절해 보세요.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-primary modal-close-trigger">설정 완료</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 4: 게임 결과 및 오답 노트 모달
+       ========================================================================= -->
+  <div id="resultModal" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="resultTitle" class="modal-title">🎉 스테이지 결과</h2>
+      </div>
+      <div class="modal-body">
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div style="font-size: 0.95rem; font-weight: 800; color: #546e7a;">최종 획득 점수</div>
+          <div id="resultScore" style="font-size: 2.8rem; font-weight: 900; color: #2e7d32; line-height: 1.2;">0 점</div>
+          <div id="resultSummary" style="font-size: 0.9rem; color: #37474f; margin-top: 8px;"></div>
+        </div>
+
+        <h3 style="font-size: 1.05rem; font-weight: 900; color: #c62828; display: flex; align-items: center; gap: 6px;">
+          <span>📝</span> 복습 오답 노트 (내가 헷갈린 내용)
+        </h3>
+        <p style="font-size: 0.82rem; color: #78909c; margin-bottom: 8px;">
+          놓친 틀린 설명과, 억울하게 때린 올바른 설명을 확인해 보세요!
+        </p>
+
+        <div id="wrongNoteList" class="wrong-note-list">
+          <!-- JS로 동적 생성 -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button id="nextStageBtn" class="btn-primary">
+          ▶ 다음 단계 도전
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 스크립트 연결 순서: 데이터 -> 사운드 -> 게임 로직 -->
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>
