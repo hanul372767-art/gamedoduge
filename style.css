@@ -1,0 +1,795 @@
+@charset "UTF-8";
+
+/* ==========================================================================
+   청소년기 영양 틀린 두더지 잡기 게임 스타일시트
+   - 귀엽고 활기찬 교육용 카툰 & 글래스모피즘 테마
+   - 반응형 디자인 (PC 모니터, 전자칠판, 태블릿 호환)
+   - 빠른 팝업(0.18s) & 긴 대기 시간 맞춤 애니메이션
+   ========================================================================== */
+
+:root {
+  --primary-color: #2e7d32;
+  --primary-light: #4caf50;
+  --primary-dark: #1b5e20;
+  --accent-gold: #ffb300;
+  --accent-orange: #ff7043;
+  --accent-red: #e53935;
+  --accent-blue: #1e88e5;
+  --bg-gradient: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 50%, #a5d6a7 100%);
+  --soil-brown: #5d4037;
+  --soil-dark: #3e2723;
+  --soil-light: #8d6e63;
+  --card-bg: rgba(255, 255, 255, 0.92);
+  --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.12);
+  --shadow-strong: 0 14px 35px rgba(0, 0, 0, 0.22);
+  --border-radius: 18px;
+  --font-main: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Noto Sans KR', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+body {
+  font-family: var(--font-main);
+  background: var(--bg-gradient);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  color: #263238;
+  overflow-x: hidden;
+  position: relative;
+  touch-action: manipulation;
+}
+
+/* --- 상단 네비게이션 & 헤더 --- */
+.game-header {
+  width: 100%;
+  max-width: 1100px;
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+}
+
+.title-badge-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.school-tag {
+  background: #1b5e20;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 30px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.game-title {
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #1b5e20;
+  text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-btn-group {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-icon-text {
+  background: var(--card-bg);
+  border: 2px solid #81c784;
+  color: #1b5e20;
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 8px 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+}
+
+.btn-icon-text:hover {
+  background: #e8f5e9;
+  transform: translateY(-2px);
+  border-color: #4caf50;
+}
+
+/* --- 메인 HUD (상태 정보 바) --- */
+.hud-container {
+  width: 100%;
+  max-width: 1060px;
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-soft);
+  padding: 14px 24px;
+  margin: 0 16px 14px;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr 1fr;
+  gap: 16px;
+  align-items: center;
+  backdrop-filter: blur(8px);
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  z-index: 10;
+}
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-label {
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #546e7a;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.hud-value {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: #263238;
+}
+
+.stage-badge {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+  color: white;
+  padding: 5px 12px;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  box-shadow: 0 3px 8px rgba(245, 124, 0, 0.3);
+  text-align: center;
+  width: 100%;
+}
+
+.score-value {
+  color: #2e7d32;
+  font-size: 1.5rem;
+}
+
+.timer-box {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.timer-value {
+  color: #d32f2f;
+  font-size: 1.45rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.timer-box.warning .timer-value {
+  animation: pulseWarning 0.6s infinite alternate;
+}
+
+@keyframes pulseWarning {
+  from { transform: scale(1); color: #d32f2f; }
+  to { transform: scale(1.15); color: #b71c1c; }
+}
+
+.lives-container {
+  display: flex;
+  gap: 5px;
+  font-size: 1.4rem;
+}
+
+.heart {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.heart.lost {
+  filter: grayscale(1) opacity(0.3);
+  transform: scale(0.8);
+}
+
+.combo-value {
+  color: #e65100;
+  font-size: 1.25rem;
+}
+
+/* --- 특별 규칙 알림 띠 (중요!) --- */
+.rule-banner {
+  width: 100%;
+  max-width: 1060px;
+  background: linear-gradient(90deg, #d32f2f 0%, #c2185b 100%);
+  color: #fff;
+  padding: 8px 18px;
+  border-radius: 12px;
+  margin: 0 16px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.95rem;
+  font-weight: 800;
+  box-shadow: 0 4px 14px rgba(211, 47, 47, 0.3);
+  animation: glowRule 2s infinite alternate;
+}
+
+.rule-banner .highlight-bad {
+  background: #ffeb3b;
+  color: #b71c1c;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 900;
+}
+
+.rule-banner .highlight-good {
+  background: #a5d6a7;
+  color: #1b5e20;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 900;
+}
+
+@keyframes glowRule {
+  from { box-shadow: 0 4px 14px rgba(211, 47, 47, 0.25); }
+  to { box-shadow: 0 4px 22px rgba(211, 47, 47, 0.6); }
+}
+
+/* --- 두더지 게임 그라운드 (3x3 판) --- */
+.game-arena {
+  width: 100%;
+  max-width: 1060px;
+  background: linear-gradient(180deg, #7cb342 0%, #558b2f 25%, #4e342e 26%, #3e2723 100%);
+  border-radius: 26px;
+  padding: 24px;
+  box-shadow: var(--shadow-strong);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  position: relative;
+  border: 6px solid #2e7d32;
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cpath d='M30 6 L38 14 L24 28 L16 20 Z' fill='%23ff9800' stroke='%23e65100' stroke-width='2'/%3E%3Cpath d='M20 24 L6 38 L4 40 L2 38 L4 36 L18 22 Z' fill='%238d6e63' stroke='%234e342e' stroke-width='2'/%3E%3Ccircle cx='34' cy='10' r='3' fill='%23fff' opacity='0.7'/%3E%3C/svg%3E") 16 16, auto;
+}
+
+.game-arena:active {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg transform='rotate(30 22 22)'%3E%3Cpath d='M30 6 L38 14 L24 28 L16 20 Z' fill='%23f44336' stroke='%23b71c1c' stroke-width='2'/%3E%3Cpath d='M20 24 L6 38 L4 40 L2 38 L4 36 L18 22 Z' fill='%238d6e63' stroke='%234e342e' stroke-width='2'/%3E%3C/g%3E%3C/svg%3E") 16 16, auto;
+}
+
+/* --- 구멍(Hole) 및 두더지(Mole) 래퍼 --- */
+.hole-wrapper {
+  position: relative;
+  aspect-ratio: 1 / 0.88;
+  overflow: hidden;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+/* 흙더미 구멍 */
+.soil-mound {
+  position: absolute;
+  bottom: 0;
+  width: 94%;
+  height: 44px;
+  background: radial-gradient(ellipse at 50% 30%, #4e342e 0%, #271610 80%);
+  border-radius: 50% 50% 45% 45% / 100% 100% 60% 60%;
+  border: 4px solid #1c0e09;
+  z-index: 3;
+  box-shadow: inset 0 10px 15px rgba(0,0,0,0.8), 0 4px 10px rgba(0,0,0,0.5);
+}
+
+.soil-grass {
+  position: absolute;
+  bottom: 6px;
+  width: 96%;
+  height: 18px;
+  background: repeating-linear-gradient(90deg, #689f38, #689f38 14px, #558b2f 14px, #558b2f 28px);
+  border-radius: 12px;
+  z-index: 4;
+}
+
+/* --- 두더지 본체 ---
+   - 핵심 요구사항: 등장속도는 빠름 (0.18s)
+   - 머무르는 시간은 길게 JS 타이머로 조절
+*/
+.mole-container {
+  position: absolute;
+  bottom: 12px;
+  width: 90%;
+  height: 94%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  z-index: 2;
+  transform: translateY(115%);
+  transition: transform 0.18s cubic-bezier(0.18, 0.89, 0.32, 1.25);
+  pointer-events: none;
+}
+
+.mole-container.up {
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.mole-container.hit-good {
+  animation: moleHitSuccess 0.4s ease-out forwards;
+}
+
+.mole-container.hit-bad {
+  animation: moleHitInnocent 0.4s ease-out forwards;
+}
+
+.mole-container.retreating {
+  transition: transform 0.22s cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  transform: translateY(115%);
+}
+
+@keyframes moleHitSuccess {
+  0% { transform: scale(1) translateY(0); filter: brightness(1.4); }
+  40% { transform: scale(0.9) translateY(15px) rotate(8deg); }
+  100% { transform: scale(0.4) translateY(120%) rotate(-15deg); opacity: 0; }
+}
+
+@keyframes moleHitInnocent {
+  0% { transform: scale(1); }
+  25% { transform: scale(1.1) translateX(-8px) rotate(-6deg); }
+  50% { transform: scale(1.1) translateX(8px) rotate(6deg); }
+  75% { transform: scale(0.95) translateY(10px); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+/* --- 두더지가 들고 있는 푯말(Signboard) --- */
+.mole-sign {
+  width: 96%;
+  background: #ffffff;
+  border: 3px solid #ff9800;
+  border-radius: 14px;
+  padding: 8px 10px;
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+  margin-bottom: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  pointer-events: inherit;
+}
+
+.mole-sign::after {
+  content: '';
+  position: absolute;
+  bottom: -9px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12px;
+  height: 10px;
+  background: #8d6e63;
+  border-radius: 3px;
+}
+
+.mole-keyword {
+  display: inline-block;
+  background: #2e7d32;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 800;
+  padding: 2px 10px;
+  border-radius: 12px;
+  margin-bottom: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.mole-text {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #212121;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+
+/* 두더지 캐릭터 그래픽 (SVG 기반) */
+.mole-graphic {
+  width: 110px;
+  height: 95px;
+  position: relative;
+  z-index: 1;
+}
+
+/* 머무르는 시간 종료 임박 시 살짝 깜빡임(시각 힌트) */
+.mole-container.time-warning .mole-sign {
+  border-color: #f44336;
+  animation: signBlink 0.35s infinite alternate;
+}
+
+@keyframes signBlink {
+  from { background: #ffffff; }
+  to { background: #ffebee; }
+}
+
+/* --- 타격 플로팅 텍스트 (+100! / 아야! -50!) --- */
+.hit-effect {
+  position: absolute;
+  top: 15%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-weight: 900;
+  font-size: 1.7rem;
+  pointer-events: none;
+  z-index: 100;
+  animation: floatUp 0.7s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.4);
+}
+
+.hit-effect.success {
+  color: #ffeb3b;
+  -webkit-text-stroke: 1.5px #e65100;
+}
+
+.hit-effect.penalty {
+  color: #ff1744;
+  -webkit-text-stroke: 1.5px #880e4f;
+}
+
+@keyframes floatUp {
+  0% { transform: translate(-50%, 0) scale(0.6); opacity: 0; }
+  30% { transform: translate(-50%, -30px) scale(1.25); opacity: 1; }
+  100% { transform: translate(-50%, -65px) scale(1); opacity: 0; }
+}
+
+/* --- 모달 창 공통 스타일 --- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 30, 22, 0.75);
+  backdrop-filter: blur(6px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+  padding: 20px;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-content {
+  background: #ffffff;
+  border-radius: 24px;
+  width: 100%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.35);
+  display: flex;
+  flex-direction: column;
+  border: 4px solid #4caf50;
+  animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPop {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.modal-header {
+  background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%);
+  color: white;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-title {
+  font-size: 1.35rem;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modal-close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  font-size: 1.4rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.modal-body {
+  padding: 24px;
+  color: #37474f;
+  line-height: 1.6;
+}
+
+.modal-footer {
+  padding: 16px 24px 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  background: #f9fbe7;
+  border-top: 1px solid #e0e0e0;
+}
+
+/* --- 버튼 스타일 --- */
+.btn-primary {
+  background: linear-gradient(135deg, #43a047, #2e7d32);
+  color: white;
+  border: none;
+  font-size: 1.15rem;
+  font-weight: 900;
+  padding: 14px 32px;
+  border-radius: 16px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(46, 125, 50, 0.35);
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(46, 125, 50, 0.45);
+}
+
+.btn-secondary {
+  background: #eceff1;
+  color: #37474f;
+  border: 2px solid #cfd8dc;
+  font-size: 1rem;
+  font-weight: 800;
+  padding: 12px 24px;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: #cfd8dc;
+}
+
+/* --- 스테이지 선택 카드 리스트 --- */
+.stage-select-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin: 18px 0;
+}
+
+.stage-card {
+  background: #f1f8e9;
+  border: 2px solid #aed581;
+  border-radius: 16px;
+  padding: 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+}
+
+.stage-card:hover {
+  background: #dcedc8;
+  transform: translateY(-3px);
+  border-color: #689f38;
+  box-shadow: 0 6px 14px rgba(104, 159, 56, 0.25);
+}
+
+.stage-card.active {
+  border: 3px solid #2e7d32;
+  background: #c8e6c9;
+}
+
+.stage-card-title {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #1b5e20;
+  margin-bottom: 6px;
+}
+
+.stage-card-desc {
+  font-size: 0.82rem;
+  color: #455a64;
+  line-height: 1.4;
+}
+
+/* --- 교과서 핵심 요약 표 스타일 --- */
+.summary-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 14px 0;
+  font-size: 0.88rem;
+}
+
+.summary-table th {
+  background: #e8f5e9;
+  color: #1b5e20;
+  font-weight: 800;
+  padding: 10px 8px;
+  border: 1px solid #c8e6c9;
+  text-align: center;
+}
+
+.summary-table td {
+  padding: 8px 10px;
+  border: 1px solid #e0e0e0;
+  vertical-align: middle;
+}
+
+.summary-section-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #2e7d32;
+  margin: 18px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-left: 4px solid #2e7d32;
+  padding-left: 8px;
+}
+
+/* --- 오답 노트 리스트 --- */
+.wrong-note-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 16px 0;
+  max-height: 380px;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.wrong-note-item {
+  background: #fff8e1;
+  border-left: 5px solid #ff9800;
+  padding: 12px 14px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+}
+
+.wrong-note-item.was-innocent {
+  background: #ffebee;
+  border-left-color: #e53935;
+}
+
+.wrong-note-header {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  font-weight: 800;
+  margin-bottom: 4px;
+}
+
+.wrong-note-statement {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #263238;
+  margin-bottom: 6px;
+}
+
+.wrong-note-feedback {
+  font-size: 0.85rem;
+  color: #2e7d32;
+  background: rgba(255,255,255,0.7);
+  padding: 6px 10px;
+  border-radius: 6px;
+  line-height: 1.4;
+}
+
+/* --- 설정 폼 (대기 시간 조절 등) --- */
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #eceff1;
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-label {
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.setting-desc {
+  font-size: 0.8rem;
+  color: #78909c;
+}
+
+.btn-toggle-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.btn-toggle {
+  background: #eceff1;
+  border: 2px solid #cfd8dc;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-toggle.active {
+  background: #2e7d32;
+  color: white;
+  border-color: #1b5e20;
+}
+
+/* --- 반응형 미디어 쿼리 --- */
+@media (max-width: 900px) {
+  .hud-container {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+  .stage-select-grid {
+    grid-template-columns: 1fr;
+  }
+  .game-arena {
+    padding: 16px;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .game-title {
+    font-size: 1.15rem;
+  }
+  .hud-container {
+    grid-template-columns: 1fr 1fr;
+    padding: 10px 14px;
+  }
+  .mole-text {
+    font-size: 0.76rem;
+  }
+  .mole-keyword {
+    font-size: 0.75rem;
+  }
+  .rule-banner {
+    font-size: 0.8rem;
+    flex-direction: column;
+    text-align: center;
+    gap: 4px;
+  }
+}
